@@ -1,0 +1,39 @@
+# Environment variables
+.env
+.env.*
+!.env.example
+
+# Secrets and tokens
+*secret*
+*token*
+*key*.txt
+*.pem
+*.key
+credentials*.json
+
+# Dependencies
+node_modules/
+
+# Docker volumes
+openclaw_home/
+
+# Ollama models (if stored locally)
+*.gguf
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+logs/
+
+# OpenClaw local state (optional - user may want to track this)
+# .openclaw/

@@ -1,0 +1,40 @@
+# Nginx Configuration for OpenClaw Gateway
+# Location: /etc/nginx/sites-available/openclaw
+#
+# Setup:
+# 1. Copy this file to /etc/nginx/sites-available/openclaw
+# 2. Enable: ln -s /etc/nginx/sites-available/openclaw /etc/nginx/sites-enabled/
+# 3. Test: nginx -t
+# 4. Reload: systemctl reload nginx
+
+server {
+    listen 80;
+    listen [::]:80;
+
+    # Replace with your domain or use _ for any domain
+    server_name _;
+
+    # For HTTPS setup, see DNS_SETUP.md Step 4
+
+    location / {
+        # Proxy to OpenClaw gateway
+        proxy_pass http://127.0.0.1:18789;
+
+        # WebSocket support
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_cache_bypass $http_upgrade;
+
+        # Headers
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # Timeouts (adjust for long-running AI operations)
+        proxy_connect_timeout 60s;
+        proxy_send_timeout 60s;
+        proxy_read_timeout 60s;
+    }
+}

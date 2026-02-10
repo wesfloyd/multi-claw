@@ -1,0 +1,108 @@
+# OpenClaw Production Configuration Template
+# Location: ~/.openclaw/openclaw.json
+#
+# This matches the actual production configuration used on the DO droplet.
+# DO NOT include sensitive keys here - use environment variables in .env instead.
+
+{
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "nvidia": {
+        "baseUrl": "https://integrate.api.nvidia.com/v1",
+        "apiKey": "${NVIDIA_API_KEY}",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "moonshotai/kimi-k2.5",
+            "name": "Kimi K2.5 (NVIDIA)",
+            "reasoning": false,
+            "input": ["text"],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 200000,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "openrouter/moonshotai/kimi-k2.5",
+        "fallbacks": [
+          "nvidia/moonshotai/kimi-k2.5",
+          "anthropic/claude-sonnet-4-5-20250929"
+        ]
+      },
+      "contextPruning": {
+        "mode": "cache-ttl",
+        "ttl": "1h"
+      },
+      "compaction": {
+        "mode": "safeguard"
+      },
+      "heartbeat": {
+        "every": "30m"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "tools": {
+    "web": {
+      "search": {
+        "enabled": true,
+        "provider": "perplexity",
+        "perplexity": {
+          "baseUrl": "https://openrouter.ai/api/v1",
+          "model": "perplexity/sonar-pro"
+        }
+      },
+      "fetch": {
+        "enabled": true
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "channels": {
+    "telegram": {
+      "name": "plato",
+      "enabled": true,
+      "dmPolicy": "pairing",
+      "allowFrom": ["YOUR_TELEGRAM_USER_ID"],
+      "groupPolicy": "allowlist",
+      "streamMode": "partial"
+    }
+  },
+  "gateway": {
+    "port": 18789,
+    "mode": "local"
+  },
+  "skills": {
+    "allowBundled": ["healthcheck"],
+    "load": {
+      "extraDirs": ["/home/openclaw/openclaw/skills"]
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  }
+}

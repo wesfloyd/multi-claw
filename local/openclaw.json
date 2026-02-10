@@ -1,0 +1,83 @@
+{
+  "meta": {
+    "lastTouchedVersion": "2026.2.2",
+    "lastTouchedAt": "2026-02-06T02:11:47.333Z"
+  },
+  "wizard": {
+    "lastRunAt": "2026-02-06T02:11:39.465Z",
+    "lastRunVersion": "2026.2.2",
+    "lastRunCommand": "doctor",
+    "lastRunMode": "local"
+  },
+  "models": {
+    "mode": "merge",
+    "providers": {
+      "ollama": {
+        "baseUrl": "http://host.docker.internal:11434/v1",
+        "apiKey": "ollama-local",
+        "api": "openai-completions",
+        "models": [
+          {
+            "id": "qwen2.5-coder:14b",
+            "name": "Qwen 2.5 Coder 14B",
+            "api": "openai-completions",
+            "reasoning": false,
+            "input": [
+              "text"
+            ],
+            "cost": {
+              "input": 0,
+              "output": 0,
+              "cacheRead": 0,
+              "cacheWrite": 0
+            },
+            "contextWindow": 32768,
+            "maxTokens": 8192
+          }
+        ]
+      }
+    }
+  },
+  "agents": {
+    "defaults": {
+      "model": {
+        "primary": "anthropic/claude-sonnet-4-20250514"
+      },
+      "heartbeat": {
+        "every": "30m"
+      },
+      "maxConcurrent": 4,
+      "subagents": {
+        "maxConcurrent": 8
+      }
+    }
+  },
+  "messages": {
+    "ackReactionScope": "group-mentions"
+  },
+  "commands": {
+    "native": "auto",
+    "nativeSkills": "auto"
+  },
+  "channels": {
+    "telegram": {
+      "dmPolicy": "pairing",
+      "botToken": "${TELEGRAM_BOT_TOKEN}",
+      "allowFrom": [
+        "YOUR_TELEGRAM_USER_ID"
+      ],
+      "groupPolicy": "allowlist",
+      "streamMode": "partial"
+    }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": {
+        "enabled": true
+      }
+    }
+  },
+  "gateway": {
+    "mode": "local"
+  }
+}
