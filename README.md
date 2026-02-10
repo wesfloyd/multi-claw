@@ -2,14 +2,12 @@
 
 Production and development deployments of OpenClaw across multiple environments:
 - **DigitalOcean (Production)**: Secure from-scratch installation (4GB Intel droplet)
-- **Fly.io (Legacy)**: Previous production deployment (marked inactive)
 - **Local Mac (Development)**: MacBook Pro M3 with Docker + native Ollama for hybrid AI
 
 ## Documentation
 
-- **[do/](./do/)** - DigitalOcean deployment guides (CURRENT)
+- **[do/](./do/)** - DigitalOcean production deployment
 - **[local/](./local/)** - Local Mac development deployment
-- **[flyio/](./flyio/)** - Fly.io production deployment (inactive)
 
 ## DigitalOcean Deployment (Active)
 
@@ -28,11 +26,8 @@ ssh root@YOUR_DROPLET_IP
 ```
 
 **Key Guides:**
-- [DIGITALOCEAN_SETUP.md](./do/DIGITALOCEAN_SETUP.md) - From-scratch installation
-- [DIGITALOCEAN_CLI.md](./do/DIGITALOCEAN_CLI.md) - Using doctl for provisioning
-- [SECURITY.md](./do/SECURITY.md) - Security hardening checklist
-- [TROUBLESHOOTING.md](./do/TROUBLESHOOTING.md) - Common issues & fixes
-- [DEPLOYMENT_LOG.md](./do/DEPLOYMENT_LOG.md) - Deployment details
+- [SETUP.md](./do/SETUP.md) - Complete installation and operations guide
+- [README.md](./do/README.md) - Quick reference and common commands
 
 ---
 
