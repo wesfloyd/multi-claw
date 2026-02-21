@@ -4,29 +4,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Multi-Claw is a multi-environment deployment orchestration system for **OpenClaw**, an AI agent platform with Telegram bot integration. It manages two environments:
-
-- **`do/`** — DigitalOcean production deployment (Ubuntu 24.04, 4GB Intel droplet)
-- **`local/`** — Local Mac M3 development with Docker + Ollama hybrid AI stack
+Multi-Claw is a deployment orchestration system for **OpenClaw**, an AI agent platform with Telegram bot integration, deployed on DigitalOcean.
 
 ## Commands
-
-### Local Development (Mac)
-
-```bash
-# Lifecycle
-./local/scripts/start.sh            # Start Ollama + Docker
-./local/scripts/stop.sh             # Stop services
-./local/scripts/verify.sh           # Pre-flight checks (env, Ollama, Docker, config)
-./local/scripts/install-models.sh   # Interactive Ollama model installer
-
-# Logs & status
-docker compose -f local/docker-compose.yml logs -f
-docker compose -f local/docker-compose.yml ps
-
-# Health check
-curl -s http://localhost:18789/health
-```
 
 ### DigitalOcean Production
 
@@ -50,31 +30,27 @@ ssh root@165.245.137.3   # via 1Password SSH agent
 
 ## Architecture
 
-### Model Fallback Chains
+### Model Fallback Chain
 
-**Local**: Anthropic Claude Sonnet (primary) → Ollama qwen2.5-coder:14b (fallback)
 **Production**: OpenRouter Kimi K2.5 (primary) → NVIDIA Kimi K2.5 (fallback) → Anthropic Claude Sonnet 4.5 (fallback)
 
 ### Networking
 
 - OpenClaw gateway listens on port **18789** (Control UI + WebSocket)
-- Local: Docker container reaches Ollama via `host.docker.internal:11434`
-- Production: Nginx reverse proxy on ports 80/443 with WebSocket support
+- Nginx reverse proxy on ports 80/443 with WebSocket support
 
 ### Data Persistence
 
-All state in `~/.openclaw/`: config (`openclaw.json`), workspace, conversations, archives. Volume-mounted into Docker on local.
+All state in `~/.openclaw/`: config (`openclaw.json`), workspace, conversations, archives.
 
 ## Key Files
 
 | File | Purpose |
 |------|---------|
-| `local/docker-compose.yml` | Local Docker composition for OpenClaw gateway |
-| `local/openclaw.json` | Local OpenClaw config (models, Telegram, agents) |
 | `do/deploy.sh` | Automated 10-step production deployment script |
 | `do/openclaw.json.template` | Production config template |
 | `do/nginx.conf.template` | Nginx reverse proxy template |
-| `local/.env.example` / `do/.env.example` | Environment variable templates |
+| `do/.env.example` | Environment variable template |
 
 ## Important Conventions
 
