@@ -49,6 +49,10 @@ ufw allow 80/tcp
 ufw allow 443/tcp
 ufw allow 18789/tcp
 ufw --force enable
+
+# Enable systemd lingering for openclaw user (required for user services)
+# This allows OpenClaw gateway to run as user service without staying logged in
+loginctl enable-linger openclaw
 ```
 
 ### Step 3: Install Node.js v22
