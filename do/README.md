@@ -5,8 +5,9 @@ Production OpenClaw deployment on DigitalOcean droplet.
 ## Deployment Details
 
 **Bot**: @your_bot_username
-**IP**: YOUR_DROPLET_IP
-**Region**: YOUR_REGION
+**IP**: 165.245.137.3
+**Tailscale IP**: 100.108.242.113
+**Region**: ATL1
 **Specs**: 2 vCPU, 4GB RAM (Intel)
 **OS**: Ubuntu 24.04 LTS
 **Port**: 18789
@@ -22,14 +23,17 @@ Production OpenClaw deployment on DigitalOcean droplet.
 # SSH to droplet
 ssh root@YOUR_DROPLET_IP
 
+# SSH via Tailscale
+ssh root@100.108.242.113
+
 # View logs
-journalctl -u openclaw.service -f
+journalctl -u openclaw-gateway.service -f
 
 # Restart service
-systemctl restart openclaw.service
+systemctl restart openclaw-gateway.service
 
-# Health check
-curl http://YOUR_DROPLET_IP:18789/health
+# Health check (UI responds with HTML)
+curl -I http://YOUR_DROPLET_IP:18789/
 ```
 
 ## Documentation
@@ -56,7 +60,7 @@ Configuration templates for deployment:
 **On droplet:**
 - `/home/openclaw/openclaw/.env` - Environment variables (API keys, secrets)
 - `/home/openclaw/.openclaw/openclaw.json` - OpenClaw configuration
-- `/etc/systemd/system/openclaw.service` - systemd service definition
+- `/etc/systemd/system/openclaw-gateway.service` - systemd service definition
 
 **Gitignored (local only):**
 - `.env.connection` - Connection details and quick commands
@@ -65,10 +69,10 @@ Configuration templates for deployment:
 
 ```bash
 # Service management
-systemctl status openclaw.service
-systemctl restart openclaw.service
-journalctl -u openclaw.service -f
-journalctl -u openclaw.service -n 100 --no-pager
+systemctl status openclaw-gateway.service
+systemctl restart openclaw-gateway.service
+journalctl -u openclaw-gateway.service -f
+journalctl -u openclaw-gateway.service -n 100 --no-pager
 
 # Configuration
 nano /home/openclaw/.openclaw/openclaw.json
@@ -84,7 +88,7 @@ ss -tulpn | grep 18789
 cd /home/openclaw/openclaw
 git pull origin main
 pnpm install && pnpm build
-systemctl restart openclaw.service
+systemctl restart openclaw-gateway.service
 
 # Backup
 tar -czf ~/openclaw-backup-$(date +%Y%m%d).tar.gz /home/openclaw/.openclaw

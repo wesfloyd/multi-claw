@@ -15,16 +15,17 @@ Multi-Claw is a deployment orchestration system for **OpenClaw**, an AI agent pl
 ./do/deploy.sh
 
 # On the server (as openclaw user):
-systemctl status openclaw.service
-systemctl restart openclaw.service
-journalctl -u openclaw.service -f
-curl -s http://localhost:18789/health
+systemctl status openclaw-gateway.service
+systemctl restart openclaw-gateway.service
+journalctl -u openclaw-gateway.service -f
+curl -I http://localhost:18789/
 ```
 
 ### SSH to Production
 
 ```bash
 ssh root@165.245.137.3   # via 1Password SSH agent
+ssh root@100.108.242.113 # via Tailscale
 # App runs as `openclaw` user — always use: su - openclaw
 ```
 
@@ -37,6 +38,7 @@ ssh root@165.245.137.3   # via 1Password SSH agent
 ### Networking
 
 - OpenClaw gateway listens on port **18789** (Control UI + WebSocket)
+- Tailscale enabled for private SSH (openclaw-prod: `100.108.242.113`)
 - Nginx reverse proxy on ports 80/443 with WebSocket support
 
 ### Data Persistence

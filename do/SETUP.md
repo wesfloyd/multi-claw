@@ -202,29 +202,29 @@ Edit `~/.openclaw/openclaw.json` (see openclaw.json.template for full config):
 
 Get Telegram user ID from [@userinfobot](https://t.me/userinfobot)
 
-### Step 8: Set Up systemd Service
+### Step 8: Set Up systemd Service (System-Level)
 
 Exit to root user and create service:
 
 ```bash
 exit  # Exit from openclaw user
 
-cat > /etc/systemd/system/openclaw.service << 'EOF'
+cat > /etc/systemd/system/openclaw-gateway.service << 'EOF'
 [Unit]
-Description=OpenClaw Gateway Service
+Description=OpenClaw Gateway
 After=network.target
 
 [Service]
 Type=simple
 User=openclaw
-WorkingDirectory=/home/openclaw/openclaw
-EnvironmentFile=/home/openclaw/openclaw/.env
-ExecStart=/usr/bin/node /home/openclaw/openclaw/dist/index.js gateway --port 18789
+Group=openclaw
+Environment="PATH=/home/openclaw/.npm-global/bin:/usr/local/bin:/usr/bin:/bin"
+Environment="HOME=/home/openclaw"
+Environment="OPENCLAW_PORT=18789"
+WorkingDirectory=/home/openclaw
+ExecStart=/home/openclaw/.npm-global/bin/openclaw gateway run
 Restart=always
-RestartSec=10
-StandardOutput=journal
-StandardError=journal
-SyslogIdentifier=openclaw
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
@@ -232,12 +232,12 @@ EOF
 
 # Enable and start service
 systemctl daemon-reload
-systemctl enable openclaw.service
-systemctl start openclaw.service
+systemctl enable openclaw-gateway.service
+systemctl start openclaw-gateway.service
 
 # Check status
-systemctl status openclaw.service
-journalctl -u openclaw.service -f
+systemctl status openclaw-gateway.service
+journalctl -u openclaw-gateway.service -f
 ```
 
 ### Step 9: Set Up Reverse Proxy (Optional)
@@ -285,10 +285,11 @@ systemctl restart nginx
 
 ```bash
 # Health check
-curl http://localhost:18789/health
+curl -I http://localhost:18789/
+# Note: the gateway UI responds with HTML on `/`.
 
 # View logs
-journalctl -u openclaw.service -f
+journalctl -u openclaw-gateway.service -f
 
 # Test Telegram bot
 # Send message to your bot on Telegram
@@ -339,19 +340,19 @@ Choose: Enable
 
 ```bash
 # View status
-systemctl status openclaw.service
+systemctl status openclaw-gateway.service
 
 # Restart service
-systemctl restart openclaw.service
+systemctl restart openclaw-gateway.service
 
 # View logs (real-time)
-journalctl -u openclaw.service -f
+journalctl -u openclaw-gateway.service -f
 
 # View recent logs
-journalctl -u openclaw.service -n 100 --no-pager
+journalctl -u openclaw-gateway.service -n 100 --no-pager
 
 # Search for errors
-journalctl -u openclaw.service | grep -i error
+journalctl -u openclaw-gateway.service | grep -i error
 ```
 
 ### Configuration Management
@@ -364,7 +365,7 @@ nano /home/openclaw/.openclaw/openclaw.json
 nano /home/openclaw/openclaw/.env
 
 # After editing, restart
-systemctl restart openclaw.service
+systemctl restart openclaw-gateway.service
 ```
 
 ### Resource Monitoring
@@ -412,8 +413,8 @@ pnpm build
 
 # Exit and restart
 exit
-systemctl restart openclaw.service
-systemctl status openclaw.service
+systemctl restart openclaw-gateway.service
+systemctl status openclaw-gateway.service
 ```
 
 ## Troubleshooting
@@ -422,7 +423,7 @@ systemctl status openclaw.service
 
 ```bash
 # Check logs
-journalctl -u openclaw.service -n 50 --no-pager
+journalctl -u openclaw-gateway.service -n 50 --no-pager
 
 # Common issues:
 # 1. Wrong Node.js version
@@ -443,10 +444,10 @@ kill -9 PID
 
 ```bash
 # 1. Check service is running
-systemctl status openclaw.service
+systemctl status openclaw-gateway.service
 
 # 2. Check Telegram connection
-journalctl -u openclaw.service | grep telegram | tail -20
+journalctl -u openclaw-gateway.service | grep telegram | tail -20
 
 # 3. Verify user ID in config
 grep allowFrom /home/openclaw/.openclaw/openclaw.json
@@ -465,7 +466,7 @@ free -h
 ps aux | grep openclaw
 
 # Restart if needed
-systemctl restart openclaw.service
+systemctl restart openclaw-gateway.service
 ```
 
 ### Disk Space Issues
@@ -485,10 +486,10 @@ journalctl --vacuum-size=500M
 
 ```bash
 # Test local access
-curl http://localhost:18789/health
+curl -I http://localhost:18789/
 
 # Test from external IP
-curl http://YOUR_DROPLET_IP:18789/health
+curl -I http://YOUR_DROPLET_IP:18789/
 
 # Check Nginx logs
 tail -f /var/log/nginx/error.log
@@ -627,20 +628,44 @@ ufw allow 18789/tcp
 - SSL Certificate: FREE (Let's Encrypt)
 - **Total: ~$29/month**
 
+## Optional: Tailscale (Private SSH)
+
+Install on the droplet:
+
+```bash
+curl -fsSL https://tailscale.com/install.sh | sh
+tailscale up
+tailscale status
+```
+
+SSH via Tailscale once connected:
+
+```bash
+ssh root@100.108.242.113
+```
+
+## Optional: Ollama
+
+Install Ollama (system-wide under `/usr/local`):
+
+```bash
+curl -fsSL https://ollama.com/install.sh | sh
+```
+
 ## Quick Reference
 
 ```bash
 # Service control
-systemctl restart openclaw.service
-systemctl status openclaw.service
-journalctl -u openclaw.service -f
+systemctl restart openclaw-gateway.service
+systemctl status openclaw-gateway.service
+journalctl -u openclaw-gateway.service -f
 
 # Config files
 nano /home/openclaw/.openclaw/openclaw.json
 nano /home/openclaw/openclaw/.env
 
 # Health check
-curl http://localhost:18789/health
+curl -I http://localhost:18789/
 
 # Resource monitoring
 htop
