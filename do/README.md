@@ -5,8 +5,8 @@ Production OpenClaw deployment on DigitalOcean droplet.
 ## Deployment Details
 
 **Bot**: @your_bot_username
-**IP**: 165.245.137.3
-**Tailscale IP**: 100.108.242.113
+**IP**: YOUR_DROPLET_IP
+**Tailscale IP**: YOUR_TAILSCALE_IP
 **Region**: ATL1
 **Specs**: 2 vCPU, 4GB RAM (Intel)
 **OS**: Ubuntu 24.04 LTS
@@ -24,7 +24,7 @@ Production OpenClaw deployment on DigitalOcean droplet.
 ssh root@YOUR_DROPLET_IP
 
 # SSH via Tailscale
-ssh root@100.108.242.113
+ssh root@YOUR_TAILSCALE_IP
 
 # View logs
 journalctl -u openclaw-gateway.service -f

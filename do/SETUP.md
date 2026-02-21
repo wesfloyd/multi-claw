@@ -641,7 +641,7 @@ tailscale status
 SSH via Tailscale once connected:
 
 ```bash
-ssh root@100.108.242.113
+ssh root@YOUR_TAILSCALE_IP
 ```
 
 ## Optional: Ollama

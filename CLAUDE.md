@@ -24,8 +24,8 @@ curl -I http://localhost:18789/
 ### SSH to Production
 
 ```bash
-ssh root@165.245.137.3   # via 1Password SSH agent
-ssh root@100.108.242.113 # via Tailscale
+ssh root@YOUR_DROPLET_IP   # via 1Password SSH agent
+ssh root@YOUR_TAILSCALE_IP # via Tailscale
 # App runs as `openclaw` user — always use: su - openclaw
 ```
 
@@ -38,7 +38,7 @@ ssh root@100.108.242.113 # via Tailscale
 ### Networking
 
 - OpenClaw gateway listens on port **18789** (Control UI + WebSocket)
-- Tailscale enabled for private SSH (openclaw-prod: `100.108.242.113`)
+- Tailscale enabled for private SSH (openclaw-prod: `YOUR_TAILSCALE_IP`)
 - Nginx reverse proxy on ports 80/443 with WebSocket support
 
 ### Data Persistence
