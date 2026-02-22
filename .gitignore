@@ -2,6 +2,8 @@
 .env
 .env.*
 !.env.example
+openclaw-old.env
+dov2/openclaw-old.env
 
 # Secrets and tokens
 *secret*
